@@ -2,7 +2,7 @@ Source: sope
 Section: libs
 Priority: optional
 Maintainer: Jeroen Dekkers <jeroen@dekkers.ch>
-Build-Depends: cdbs, gnustep-make, libgnustep-base-dev, gobjc (<< 4:4.6) | gobjc-4.5, libxml2-dev, libldap2-dev, libgnutls-dev, zlib1g-dev, libpq-dev, libmysqlclient-dev, autotools-dev
+Build-Depends: debhelper (>= 8), cdbs, gnustep-make, libgnustep-base-dev, gobjc, libxml2-dev, libldap2-dev, libgnutls-dev, zlib1g-dev, libpq-dev, libmysqlclient-dev, autotools-dev
 Standards-Version: 3.9.2
 
 Package: sope4.9-dbg
