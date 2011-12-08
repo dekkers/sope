@@ -3,9 +3,9 @@ Date: Mon, 5 Dec 2011 19:35:34 +0100
 Subject: link-everything-correctly
 
 ---
- sope-appserver/NGObjWeb/GNUmakefile.preamble     |   13 ++-----------
- sope-appserver/WEExtensions/GNUmakefile.preamble |    5 ++---
- sope-appserver/WOExtensions/GNUmakefile.preamble |    6 +-----
+ sope-appserver/NGObjWeb/GNUmakefile.preamble     |   18 ++++--------------
+ sope-appserver/WEExtensions/GNUmakefile.preamble |   10 ++++------
+ sope-appserver/WOExtensions/GNUmakefile.preamble |   11 +++--------
  sope-core/EOControl/GNUmakefile.preamble         |    2 +-
  sope-core/NGExtensions/GNUmakefile.preamble      |    4 ++--
  sope-core/NGStreams/GNUmakefile.preamble         |    4 +---
@@ -16,13 +16,36 @@ Subject: link-everything-correctly
  sope-xml/DOM/GNUmakefile.preamble                |    2 +-
  sope-xml/SaxObjC/GNUmakefile.preamble            |    2 ++
  sope-xml/XmlRpc/GNUmakefile.preamble             |    2 +-
- 13 files changed, 17 insertions(+), 31 deletions(-)
+ 13 files changed, 23 insertions(+), 40 deletions(-)
 
 diff --git a/sope-appserver/NGObjWeb/GNUmakefile.preamble b/sope-appserver/NGObjWeb/GNUmakefile.preamble
-index ef5d9cc..6ba679b 100644
+index ef5d9cc..c954d1b 100644
 --- a/sope-appserver/NGObjWeb/GNUmakefile.preamble
 +++ b/sope-appserver/NGObjWeb/GNUmakefile.preamble
-@@ -68,7 +68,8 @@ endif
+@@ -38,7 +38,6 @@ DEP_DIRS = \
+ 	$(SOPE_ROOT)/sope-core/NGExtensions	\
+ 	$(SOPE_ROOT)/sope-core/EOControl	\
+ 	$(SOPE_ROOT)/sope-xml/DOM		\
+-	$(SOPE_ROOT)/sope-xml/XmlRpc		\
+ 	$(SOPE_ROOT)/sope-xml/SaxObjC
+ 
+ ifneq ($(frameworks),yes)
+@@ -53,12 +52,12 @@ endif
+ # dependencies
+ 
+ ifneq ($(frameworks),yes)
+-sope-xml-libs  = -lXmlRpc -lDOM -lSaxObjC
++sope-xml-libs  = -lDOM -lSaxObjC
+ sope-core-libs = -lNGStreams -lNGExtensions -lEOControl
+ sope-mime-libs = -lNGMime
+ sope-ngobjweb-libs = -lNGObjWeb
+ else
+-sope-xml-libs  = -framework XmlRpc -framework DOM -framework SaxObjC
++sope-xml-libs  = -framework DOM -framework SaxObjC
+ sope-core-libs = \
+   -framework NGStreams -framework NGExtensions -framework EOControl
+ sope-mime-libs = -framework NGMime -framework NGMail
+@@ -68,7 +67,8 @@ endif
  libNGObjWeb_LIBRARIES_DEPEND_UPON += \
  	$(sope-mime-libs) \
  	$(sope-core-libs) \
@@ -32,7 +55,7 @@ index ef5d9cc..6ba679b 100644
  NGObjWeb_LIBRARIES_DEPEND_UPON += \
  	$(sope-mime-libs) \
  	$(sope-core-libs)\
-@@ -90,16 +91,6 @@ SoCore_BUNDLE_LIBS += \
+@@ -90,16 +90,6 @@ SoCore_BUNDLE_LIBS += \
  	$(sope-xml-libs)
  
  
@@ -50,10 +73,10 @@ index ef5d9cc..6ba679b 100644
  
  ifeq ($(FOUNDATION_LIB),apple)
 diff --git a/sope-appserver/WEExtensions/GNUmakefile.preamble b/sope-appserver/WEExtensions/GNUmakefile.preamble
-index e781eac..b15b41a 100644
+index e781eac..cb7e685 100644
 --- a/sope-appserver/WEExtensions/GNUmakefile.preamble
 +++ b/sope-appserver/WEExtensions/GNUmakefile.preamble
-@@ -41,9 +41,8 @@ endif
+@@ -41,16 +41,15 @@ endif
  
  libWEExtensions_LIBRARIES_DEPEND_UPON += \
  	-lNGObjWeb	\
@@ -65,8 +88,33 @@ index e781eac..b15b41a 100644
  
  ifeq ($(frameworks),yes)
  WEExtensions_LIBRARIES_DEPEND_UPON += \
+ 	-framework NGObjWeb	\
+ 	-framework NGMime -framework NGMail \
+ 	-framework NGStreams -framework NGExtensions -framework EOControl \
+-	-framework XmlRpc -framework DOM -framework SaxObjC
++	-framework DOM -framework SaxObjC
+ endif
+ 
+ 
+@@ -64,7 +63,6 @@ DEP_DIRS = \
+ 	$(SOPE_ROOT)/sope-core/NGExtensions	\
+ 	$(SOPE_ROOT)/sope-core/EOControl	\
+ 	$(SOPE_ROOT)/sope-xml/DOM		\
+-	$(SOPE_ROOT)/sope-xml/XmlRpc		\
+ 	$(SOPE_ROOT)/sope-xml/SaxObjC
+ 
+ ifneq ($(frameworks),yes)
+@@ -92,7 +90,7 @@ WEExtensions_BUNDLE_LIBS   += \
+ 	-lNGObjWeb	\
+ 	-lNGMime	\
+ 	-lNGStreams -lNGExtensions -lEOControl \
+-	-lXmlRpc -lDOM -lSaxObjC
++	-lDOM -lSaxObjC
+ WEExtensions_WOBUNDLE_LIBS += $(WEExtensions_BUNDLE_LIBS)
+ 
+ ifneq ($(GNUSTEP_BUILD_DIR),)
 diff --git a/sope-appserver/WOExtensions/GNUmakefile.preamble b/sope-appserver/WOExtensions/GNUmakefile.preamble
-index 04c2714..57ffd3a 100644
+index 04c2714..6c2376d 100644
 --- a/sope-appserver/WOExtensions/GNUmakefile.preamble
 +++ b/sope-appserver/WOExtensions/GNUmakefile.preamble
 @@ -20,11 +20,8 @@ libWOExtensions_VERSION=$(MAJOR_VERSION).$(MINOR_VERSION).$(SUBMINOR_VERSION)
@@ -82,7 +130,24 @@ index 04c2714..57ffd3a 100644
  
  ifeq ($(frameworks),yes)
  WOExtensions_LIBRARIES_DEPEND_UPON += \
-@@ -72,7 +69,6 @@ endif
+@@ -32,7 +29,7 @@ WOExtensions_LIBRARIES_DEPEND_UPON += \
+ 	-framework NGObjWeb	\
+ 	-framework NGMime -framework NGMail \
+ 	-framework NGStreams -framework NGExtensions -framework EOControl \
+-	-framework XmlRpc -framework DOM -framework SaxObjC
++	-framework DOM -framework SaxObjC
+ endif
+ 
+ 
+@@ -48,7 +45,6 @@ DEP_DIRS = \
+ 	$(SOPE_ROOT)/sope-core/NGExtensions	\
+ 	$(SOPE_ROOT)/sope-core/EOControl	\
+ 	$(SOPE_ROOT)/sope-xml/DOM		\
+-	$(SOPE_ROOT)/sope-xml/XmlRpc		\
+ 	$(SOPE_ROOT)/sope-xml/SaxObjC
+ 
+ ifneq ($(frameworks),yes)
+@@ -72,11 +68,10 @@ endif
  ifneq ($(frameworks),yes)
  
  WOExtensions_BUNDLE_LIBS += \
@@ -90,6 +155,11 @@ index 04c2714..57ffd3a 100644
  	-lNGObjWeb	\
  	-lNGMime	\
  	-lNGStreams -lNGExtensions -lEOControl \
+-	-lXmlRpc -lDOM -lSaxObjC
++	-lDOM -lSaxObjC
+ WOExtensions_WOBUNDLE_LIBS += $(WOExtensions_BUNDLE_LIBS)
+ 
+ endif
 diff --git a/sope-core/EOControl/GNUmakefile.preamble b/sope-core/EOControl/GNUmakefile.preamble
 index 5a4c19d..76bc30a 100644
 --- a/sope-core/EOControl/GNUmakefile.preamble

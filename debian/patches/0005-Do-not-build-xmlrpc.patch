@@ -1,0 +1,23 @@
+From: Builder <jeroen@dekkers.ch>
+Date: Thu, 8 Dec 2011 02:10:56 +0100
+Subject: Do not build xmlrpc
+
+---
+ sope-xml/GNUmakefile |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/sope-xml/GNUmakefile b/sope-xml/GNUmakefile
+index 03ef81b..7a3c1f4 100644
+--- a/sope-xml/GNUmakefile
++++ b/sope-xml/GNUmakefile
+@@ -8,8 +8,7 @@ VERSION=4.5.0
+ 
+ SUBPROJECTS = \
+ 	SaxObjC		\
+-	DOM		\
+-	XmlRpc
++	DOM
+ 
+ SUBPROJECTS += STXSaxDriver
+ 
+-- 
