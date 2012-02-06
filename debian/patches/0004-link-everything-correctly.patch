@@ -12,11 +12,11 @@ Subject: link-everything-correctly
  sope-gdl1/GDLAccess/GNUmakefile.preamble         |    2 +-
  sope-gdl1/MySQL/GNUmakefile.preamble             |    1 -
  sope-ldap/NGLdap/GNUmakefile.preamble            |    2 +-
- sope-mime/GNUmakefile.preamble                   |    3 ++-
+ sope-mime/GNUmakefile.preamble                   |    2 +-
  sope-xml/DOM/GNUmakefile.preamble                |    2 +-
  sope-xml/SaxObjC/GNUmakefile.preamble            |    2 ++
  sope-xml/XmlRpc/GNUmakefile.preamble             |    2 +-
- 13 files changed, 23 insertions(+), 40 deletions(-)
+ 13 files changed, 22 insertions(+), 40 deletions(-)
 
 diff --git a/sope-appserver/NGObjWeb/GNUmakefile.preamble b/sope-appserver/NGObjWeb/GNUmakefile.preamble
 index ef5d9cc..c954d1b 100644
@@ -243,15 +243,10 @@ index 950e3e5..05103b2 100644
  	-framework NGExtensions -framework EOControl	\
  	-framework DOM -framework SaxObjC
 diff --git a/sope-mime/GNUmakefile.preamble b/sope-mime/GNUmakefile.preamble
-index 3d6ec70..80d4600 100644
+index 3d6ec70..839d8ec 100644
 --- a/sope-mime/GNUmakefile.preamble
 +++ b/sope-mime/GNUmakefile.preamble
-@@ -1,3 +1,4 @@
-+
- # compilation settings
- 
- SOPE_ROOT=..
-@@ -19,7 +20,7 @@ libNGMime_INCLUDE_DIRS += \
+@@ -19,7 +19,7 @@ libNGMime_INCLUDE_DIRS += \
  
  libNGMime_LIBRARIES_DEPEND_UPON += \
  	-lNGStreams -lNGExtensions -lEOControl	\
