@@ -12,7 +12,7 @@ Commit: http://mtn.inverse.ca/revision/diff/df0ef67a4bf2065b385d60810d28973f0fb0
    formattedMsg = [self formattedEvent:_event];
    level = [self syslogLevelForLogLevel:[_event level]];
 -  syslog(level, [formattedMsg cString]);
-+  syslog(level, "%s", [formattedMsg cString])
++  syslog(level, "%s", [formattedMsg cString]);
  }
  
  - (int)syslogLevelForLogLevel:(NGLogLevel)_level {
