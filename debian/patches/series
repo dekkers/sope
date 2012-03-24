@@ -3,3 +3,4 @@
 0003-close-all-fds-on-daemon-start.patch
 0004-link-everything-correctly.patch
 0005-Do-not-build-xmlrpc.patch
+0006-format-security
