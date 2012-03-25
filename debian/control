@@ -4,6 +4,9 @@ Priority: optional
 Maintainer: Jeroen Dekkers <jeroen@dekkers.ch>
 Build-Depends: debhelper (>= 8), cdbs, gnustep-make, libgnustep-base-dev, gobjc, libxml2-dev, libldap2-dev, libgnutls-dev, zlib1g-dev, libpq-dev, libmysqlclient-dev, autotools-dev
 Standards-Version: 3.9.3
+Homepage: http://www.sogo.nu/
+Vcs-Browser: https://github.com/dekkers/sope-debian
+Vcs-Git: git://github.com/dekkers/sope-debian.git
 
 Package: libsope1
 Section: libs
