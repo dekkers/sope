@@ -1,0 +1,22 @@
+From: Jelmer Vernooij <jelmer@debian.org>
+Date: Sat, 24 Mar 2012 17:36:23 +0100
+Subject: Fix compilation with -Werror-format-security
+
+=== modified file 'sope-core/NGExtensions/NGLogging.subproj/NGLogSyslogAppender.m'
+---
+ .../NGLogging.subproj/NGLogSyslogAppender.m        |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sope-core/NGExtensions/NGLogging.subproj/NGLogSyslogAppender.m b/sope-core/NGExtensions/NGLogging.subproj/NGLogSyslogAppender.m
+index eddb97e..7de9ee0 100644
+--- a/sope-core/NGExtensions/NGLogging.subproj/NGLogSyslogAppender.m
++++ b/sope-core/NGExtensions/NGLogging.subproj/NGLogSyslogAppender.m
+@@ -86,7 +86,7 @@ static NSString *defaultSyslogIdentifier = nil;
+   
+   formattedMsg = [self formattedEvent:_event];
+   level = [self syslogLevelForLogLevel:[_event level]];
+-  syslog(level, [formattedMsg cString]);
++  syslog(level, "%s", [formattedMsg cString]);
+ }
+ 
+ - (int)syslogLevelForLogLevel:(NGLogLevel)_level {

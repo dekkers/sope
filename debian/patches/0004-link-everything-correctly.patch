@@ -291,4 +291,3 @@ index 9f47f46..3b15d5c 100644
  
  ifneq ($(GNUSTEP_BUILD_DIR),)
  libXmlRpc_LIB_DIRS += \
--- 

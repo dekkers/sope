@@ -21,4 +21,3 @@ index b5068bb..a941f3e 100644
  
  ifeq ($(HAS_LIBRARY_ldap),yes)
  SUBPROJECTS += sope-ldap
--- 

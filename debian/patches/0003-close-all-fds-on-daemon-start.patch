@@ -7,10 +7,10 @@ Subject: close-all-fds-on-daemon-start
  1 files changed, 6 insertions(+), 1 deletions(-)
 
 diff --git a/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m b/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m
-index 94e7bae..bb46229 100644
+index 7293c36..d108382 100644
 --- a/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m
 +++ b/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m
-@@ -973,7 +973,7 @@ int WOWatchDogApplicationMain
+@@ -965,7 +965,7 @@ int WOWatchDogApplicationMain
    NSAutoreleasePool *pool;
    NSUserDefaults *ud;
    NSString *logFile, *nsPidFile;
@@ -19,7 +19,7 @@ index 94e7bae..bb46229 100644
    pid_t childPid;
    NSProcessInfo *processInfo;
    Class WOAppClass;
-@@ -1001,6 +1001,11 @@ int WOWatchDogApplicationMain
+@@ -993,6 +993,11 @@ int WOWatchDogApplicationMain
      logFile = [NSString stringWithFormat: @"/var/log/%@/%@.log",
                          [processInfo processName],
                          [processInfo processName]];
@@ -31,4 +31,3 @@ index 94e7bae..bb46229 100644
    if (![logFile isEqualToString: @"-"]) {
      freopen([logFile cString], "a", stdout);
      freopen([logFile cString], "a", stderr);
--- 
