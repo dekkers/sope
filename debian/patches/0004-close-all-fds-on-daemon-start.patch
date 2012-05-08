@@ -1,0 +1,34 @@
+From: Jeroen Dekkers <jeroen@dekkers.ch>
+Date: Mon, 5 Dec 2011 19:35:34 +0100
+Subject: close-all-fds-on-daemon-start
+
+---
+ .../NGObjWeb/WOWatchDogApplicationMain.m           |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+diff --git a/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m b/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m
+index 94e7bae..bb46229 100644
+--- a/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m
++++ b/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m
+@@ -973,7 +973,7 @@ int WOWatchDogApplicationMain
+   NSAutoreleasePool *pool;
+   NSUserDefaults *ud;
+   NSString *logFile, *nsPidFile;
+-  int rc;
++  int rc, i;
+   pid_t childPid;
+   NSProcessInfo *processInfo;
+   Class WOAppClass;
+@@ -1001,6 +1001,11 @@ int WOWatchDogApplicationMain
+     logFile = [NSString stringWithFormat: @"/var/log/%@/%@.log",
+                         [processInfo processName],
+                         [processInfo processName]];
++
++  /* Close all open file descriptors */
++  for (i = getdtablesize(); i >= 3; --i)
++    close(i);
++  freopen("/dev/null", "a", stdin);
+   if (![logFile isEqualToString: @"-"]) {
+     freopen([logFile cString], "a", stdout);
+     freopen([logFile cString], "a", stderr);
+-- 

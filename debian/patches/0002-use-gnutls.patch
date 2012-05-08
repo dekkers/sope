@@ -1,0 +1,283 @@
+From: Jeroen Dekkers <jeroen@dekkers.ch>
+Date: Mon, 5 Dec 2011 19:35:34 +0100
+Subject: use-gnutls
+
+---
+ configure                                         |    9 +-
+ sope-core/NGStreams/GNUmakefile.preamble          |    6 +-
+ sope-core/NGStreams/NGActiveSSLSocket.m           |  144 ++++++++++++++++++++-
+ sope-core/NGStreams/NGStreams/NGActiveSSLSocket.h |    7 +
+ sope-ldap/NGLdap/GNUmakefile.preamble             |    3 -
+ 5 files changed, 162 insertions(+), 7 deletions(-)
+
+diff --git a/configure b/configure
+index 39310ea..bff7a30 100755
+--- a/configure
++++ b/configure
+@@ -426,6 +426,7 @@ checkLinking() {
+   cd $tmpdir
+   cp ../maintenance/dummytool.c .
+ 
++  OLDLIBS=$LIBS
+   for LIB in $1;do
+     LIBS="$LIBS -l${LIB}"
+   done
+@@ -458,11 +459,14 @@ checkLinking() {
+     else
+       echo "failed to link $2 library: $1"
+       cfgwrite "HAS_LIBRARY_$1=no"
++      LIBS=$OLDLIBS
+     fi
+   fi
+   
+   cd $oldpwd
+   rm -rf $tmpdir
++
++  return $LINK_RESULT
+ }
+ 
+ checkDependencies() {
+@@ -470,7 +474,10 @@ checkDependencies() {
+   cfgwrite "# library dependencies"
+   checkLinking "xml2"        optional;
+   checkLinking "ldap"        optional;
+-  checkLinking "ssl"         required; # TODO: make optional
++  checkLinking "gnutls"      optional;
++  if test $? != 0; then
++      checkLinking "ssl"      required;
++  fi
+   checkLinking "pq"          optional;
+ #  checkLinking "sqlite3"     optional;
+   cfgwrite "HAS_LIBRARY_sqlite3=no"
+diff --git a/sope-core/NGStreams/GNUmakefile.preamble b/sope-core/NGStreams/GNUmakefile.preamble
+index 55f66f8..46ff501 100644
+--- a/sope-core/NGStreams/GNUmakefile.preamble
++++ b/sope-core/NGStreams/GNUmakefile.preamble
+@@ -47,9 +47,13 @@ endif
+ 
+ 
+ # activating SSL support
+-ifneq ($(ssl),no)
+ libNGStreams_OBJC_FILES += NGActiveSSLSocket.m
+ NGStreams_OBJC_FILES += NGActiveSSLSocket.m
++ifeq ($(HAS_LIBRARY_gnutls),yes)
++ADDITIONAL_CPPFLAGS += -DHAVE_GNUTLS=1
++libNGStreams_LIBRARIES_DEPEND_UPON += -lgnutls
++NGStreams_LIBRARIES_DEPEND_UPON += -lgnutls
++else
+ ADDITIONAL_CPPFLAGS += -DHAVE_OPENSSL=1 -DOPENSSL_NO_KRB5
+ libNGStreams_LIBRARIES_DEPEND_UPON += -lssl -lcrypto
+ NGStreams_LIBRARIES_DEPEND_UPON += -lssl -lcrypto
+diff --git a/sope-core/NGStreams/NGActiveSSLSocket.m b/sope-core/NGStreams/NGActiveSSLSocket.m
+index f1fcef6..04389fc 100644
+--- a/sope-core/NGStreams/NGActiveSSLSocket.m
++++ b/sope-core/NGStreams/NGActiveSSLSocket.m
+@@ -1,5 +1,6 @@
+ /*
+   Copyright (C) 2000-2005 SKYRIX Software AG
++  Copyright (C) 2011 Jeroen Dekkers <jeroen@dekkers.ch>
+ 
+   This file is part of SOPE.
+ 
+@@ -22,7 +23,9 @@
+ #include <NGStreams/NGActiveSSLSocket.h>
+ #include "common.h"
+ 
+-#if HAVE_OPENSSL
++#if HAVE_GNUTLS
++#  include <gnutls/gnutls.h>
++#elif HAVE_OPENSSL
+ #  define id openssl_id
+ #  include <openssl/ssl.h>
+ #  include <openssl/err.h>
+@@ -35,7 +38,144 @@
+ 
+ @implementation NGActiveSSLSocket
+ 
+-#if HAVE_OPENSSL
++#if HAVE_GNUTLS
++- (id)initWithDomain:(id<NGSocketDomain>)_domain {
++  if ((self = [super initWithDomain:_domain])) {
++    //BIO *bio_err;
++    static BOOL didGlobalInit = NO;
++    int ret;
++
++    if (!didGlobalInit) {
++      /* Global system initialization*/
++      if (gnutls_global_init()) {
++	[self release];
++	return nil;
++      }
++
++      didGlobalInit = YES;
++    }
++
++    ret = gnutls_certificate_allocate_credentials ((gnutls_certificate_credentials_t *) &self->cred);
++    if ( ret)
++      {
++	NSLog(@"ERROR(%s): couldn't create GnuTLS credentials (%s)",
++	      __PRETTY_FUNCTION__, gnutls_strerror(ret));
++	[self release];
++	return nil;
++      }
++
++    self->session = NULL;
++  }
++  return self;
++}
++
++- (void)dealloc {
++  if (self->session) {
++    gnutls_deinit((gnutls_session_t) self->session);
++    self->session = NULL;
++  }
++  if (self->cred) {
++    gnutls_certificate_free_credentials((gnutls_certificate_credentials_t) self->cred);
++    self->cred = NULL;
++  }
++  [super dealloc];
++}
++
++/* basic IO, reading and writing bytes */
++
++- (unsigned)readBytes:(void *)_buf count:(unsigned)_len {
++  ssize_t ret;
++
++  if (self->session == NULL)
++    // should throw error
++    return NGStreamError;
++
++
++  ret = gnutls_record_recv((gnutls_session_t) self->session, _buf, _len);
++  if (ret < 0)
++    return NGStreamError;
++  else
++    return ret;
++}
++- (unsigned)writeBytes:(const void *)_buf count:(unsigned)_len {
++  ssize_t ret;
++
++  if (self->session == NULL)
++    // should throw error
++    return NGStreamError;
++
++  ret = gnutls_record_send((gnutls_session_t) self->session, _buf, _len);
++  if (ret < 0)
++    return NGStreamError;
++  else
++    return ret;
++}
++
++/* connection and shutdown */
++
++- (BOOL)markNonblockingAfterConnect {
++  return NO;
++}
++
++- (BOOL) startTLS
++{
++  int ret;
++
++  ret = gnutls_init((gnutls_session_t *) &self->session, GNUTLS_CLIENT);
++  if (ret) {
++    // should set exception !
++    NSLog(@"ERROR(%s): couldn't create GnuTLS session (%s)",
++          __PRETTY_FUNCTION__, gnutls_strerror(ret));
++    return NO;
++  }
++
++  gnutls_priority_set_direct (session, "NORMAL", NULL);
++
++  ret = gnutls_credentials_set((gnutls_session_t) self->session, GNUTLS_CRD_CERTIFICATE, (gnutls_certificate_credentials_t) self->cred);
++  if (ret) {
++    // should set exception !
++    NSLog(@"ERROR(%s): couldn't set GnuTLS credentials (%s)",
++          __PRETTY_FUNCTION__, gnutls_strerror(ret));
++    return NO;
++  }
++
++  gnutls_transport_set_ptr((gnutls_session_t) self->session, (gnutls_transport_ptr_t) self->fd);
++
++  ret = gnutls_handshake((gnutls_session_t) self->session);
++  if (ret) {
++    NSLog(@"ERROR(%s): couldn't setup SSL connection on socket (%s)",
++	  __PRETTY_FUNCTION__, gnutls_strerror(ret));
++    if (ret == GNUTLS_E_FATAL_ALERT_RECEIVED) {
++      NSLog(@"Alert: %s", gnutls_alert_get_name(gnutls_alert_get(self->session)));
++    }
++    [self shutdown];
++    return NO;
++  }
++
++  return YES;
++}
++
++- (BOOL)primaryConnectToAddress:(id<NGSocketAddress>)_address {
++  if (![super primaryConnectToAddress:_address])
++    /* could not connect to Unix socket ... */
++    return NO;
++
++  return [self startTLS];
++}
++
++- (BOOL)shutdown {
++  if (self->session) {
++    gnutls_deinit((gnutls_session_t) self->session);
++    self->session = NULL;
++  }
++  if (self->cred) {
++    gnutls_certificate_free_credentials((gnutls_certificate_credentials_t) self->cred);
++    self->cred = NULL;
++  }
++  return [super shutdown];
++}
++
++#elif HAVE_OPENSSL
+ 
+ #if STREAM_BIO
+ static int streamBIO_bwrite(BIO *, const char *, int) {
+diff --git a/sope-core/NGStreams/NGStreams/NGActiveSSLSocket.h b/sope-core/NGStreams/NGStreams/NGActiveSSLSocket.h
+index 9e3fd11..685b18a 100644
+--- a/sope-core/NGStreams/NGStreams/NGActiveSSLSocket.h
++++ b/sope-core/NGStreams/NGStreams/NGActiveSSLSocket.h
+@@ -1,5 +1,6 @@
+ /*
+   Copyright (C) 2000-2005 SKYRIX Software AG
++  Copyright (C) 2011 Jeroen Dekkers <jeroen@dekkers.ch>
+ 
+   This file is part of SOPE.
+ 
+@@ -22,12 +23,18 @@
+ #define __NGNet_NGActiveSSLSocket_H__
+ 
+ #include <NGStreams/NGActiveSocket.h>
++#include "../config.h"
+ 
+ @interface NGActiveSSLSocket : NGActiveSocket
+ {
++#ifdef HAVE_GNUTLS
++  void *cred; /* real type: gnutls_certificate_credentials_t */
++  void *session; /* real type: gnutls_session_t */
++#else
+   void *ctx;   /* real type: SSL_CTX */
+   void *ssl;   /* real type: SSL */
+   void *sbio;  /* real type: BIO (basic input/output) */
++#endif
+ }
+ 
+ - (BOOL) startTLS;
+diff --git a/sope-ldap/NGLdap/GNUmakefile.preamble b/sope-ldap/NGLdap/GNUmakefile.preamble
+index 6fa8665..950e3e5 100644
+--- a/sope-ldap/NGLdap/GNUmakefile.preamble
++++ b/sope-ldap/NGLdap/GNUmakefile.preamble
+@@ -40,9 +40,6 @@ ifneq ($(FOUNDATION_LIB),nx)
+ ifeq ($(sasl),yes)
+ libNGLdap_LIBRARIES_DEPEND_UPON += -lsasl
+ endif
+-ifneq ($(nossl),yes)
+-libNGLdap_LIBRARIES_DEPEND_UPON += -lssl
+-endif
+ 
+ else # is NeXT/Apple Foundation
+ 
+-- 

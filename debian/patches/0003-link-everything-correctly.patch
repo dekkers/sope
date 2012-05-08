@@ -1,0 +1,229 @@
+From: Jeroen Dekkers <jeroen@dekkers.ch>
+Date: Mon, 5 Dec 2011 19:35:34 +0100
+Subject: link-everything-correctly
+
+---
+ sope-appserver/NGObjWeb/GNUmakefile.preamble     |   13 ++-----------
+ sope-appserver/WEExtensions/GNUmakefile.preamble |    5 ++---
+ sope-appserver/WOExtensions/GNUmakefile.preamble |    6 +-----
+ sope-core/EOControl/GNUmakefile.preamble         |    2 +-
+ sope-core/NGExtensions/GNUmakefile.preamble      |    4 ++--
+ sope-core/NGStreams/GNUmakefile.preamble         |    4 +---
+ sope-gdl1/GDLAccess/GNUmakefile.preamble         |    2 +-
+ sope-gdl1/MySQL/GNUmakefile.preamble             |    1 -
+ sope-ldap/NGLdap/GNUmakefile.preamble            |    2 +-
+ sope-mime/GNUmakefile.preamble                   |    3 ++-
+ sope-xml/DOM/GNUmakefile.preamble                |    2 +-
+ sope-xml/SaxObjC/GNUmakefile.preamble            |    2 ++
+ sope-xml/XmlRpc/GNUmakefile.preamble             |    2 +-
+ 13 files changed, 17 insertions(+), 31 deletions(-)
+
+diff --git a/sope-appserver/NGObjWeb/GNUmakefile.preamble b/sope-appserver/NGObjWeb/GNUmakefile.preamble
+index ef5d9cc..6ba679b 100644
+--- a/sope-appserver/NGObjWeb/GNUmakefile.preamble
++++ b/sope-appserver/NGObjWeb/GNUmakefile.preamble
+@@ -68,7 +68,8 @@ endif
+ libNGObjWeb_LIBRARIES_DEPEND_UPON += \
+ 	$(sope-mime-libs) \
+ 	$(sope-core-libs) \
+-	$(sope-xml-libs)
++	$(sope-xml-libs) \
++	-lgnustep-base -lobjc
+ NGObjWeb_LIBRARIES_DEPEND_UPON += \
+ 	$(sope-mime-libs) \
+ 	$(sope-core-libs)\
+@@ -90,16 +91,6 @@ SoCore_BUNDLE_LIBS += \
+ 	$(sope-xml-libs)
+ 
+ 
+-# platform specific settings
+-
+-ifneq ($(findstring openbsd, $(GNUSTEP_TARGET_OS)), openbsd)
+-# OpenBSD does not require libcrypt
+-ifneq ($(findstring darwin, $(GNUSTEP_TARGET_OS)), darwin)
+-# and neither does MacOSX? ...
+-libNGObjWeb_LIBRARIES_DEPEND_UPON += -lcrypt
+-endif
+-endif
+-
+ # Apple
+ 
+ ifeq ($(FOUNDATION_LIB),apple)
+diff --git a/sope-appserver/WEExtensions/GNUmakefile.preamble b/sope-appserver/WEExtensions/GNUmakefile.preamble
+index e781eac..b15b41a 100644
+--- a/sope-appserver/WEExtensions/GNUmakefile.preamble
++++ b/sope-appserver/WEExtensions/GNUmakefile.preamble
+@@ -41,9 +41,8 @@ endif
+ 
+ libWEExtensions_LIBRARIES_DEPEND_UPON += \
+ 	-lNGObjWeb	\
+-	-lNGMime	\
+-	-lNGStreams -lNGExtensions -lEOControl \
+-	-lXmlRpc -lDOM -lSaxObjC
++	-lNGExtensions -lEOControl \
++	-lgnustep-base -lobjc -lm
+ 
+ ifeq ($(frameworks),yes)
+ WEExtensions_LIBRARIES_DEPEND_UPON += \
+diff --git a/sope-appserver/WOExtensions/GNUmakefile.preamble b/sope-appserver/WOExtensions/GNUmakefile.preamble
+index 04c2714..57ffd3a 100644
+--- a/sope-appserver/WOExtensions/GNUmakefile.preamble
++++ b/sope-appserver/WOExtensions/GNUmakefile.preamble
+@@ -20,11 +20,8 @@ libWOExtensions_VERSION=$(MAJOR_VERSION).$(MINOR_VERSION).$(SUBMINOR_VERSION)
+ # dependencies
+ 
+ libWOExtensions_LIBRARIES_DEPEND_UPON += \
+-	-lWEExtensions	\
+ 	-lNGObjWeb	\
+-	-lNGMime	\
+-	-lNGStreams -lNGExtensions -lEOControl \
+-	-lXmlRpc -lDOM -lSaxObjC
++	-lgnustep-base -lobjc
+ 
+ ifeq ($(frameworks),yes)
+ WOExtensions_LIBRARIES_DEPEND_UPON += \
+@@ -72,7 +69,6 @@ endif
+ ifneq ($(frameworks),yes)
+ 
+ WOExtensions_BUNDLE_LIBS += \
+-	-lWOExtensions -lWEExtensions \
+ 	-lNGObjWeb	\
+ 	-lNGMime	\
+ 	-lNGStreams -lNGExtensions -lEOControl \
+diff --git a/sope-core/EOControl/GNUmakefile.preamble b/sope-core/EOControl/GNUmakefile.preamble
+index 5a4c19d..76bc30a 100644
+--- a/sope-core/EOControl/GNUmakefile.preamble
++++ b/sope-core/EOControl/GNUmakefile.preamble
+@@ -17,7 +17,7 @@ libEOControl_LIBRARIES_DEPEND_UPON += -lFoundation
+ endif
+ 
+ ifeq ($(FOUNDATION_LIB),gnu)
+-libEOControl_LIBRARIES_DEPEND_UPON += -lgnustep-base
++libEOControl_LIBRARIES_DEPEND_UPON += -lgnustep-base -lobjc -lm
+ endif
+ 
+ # Apple
+diff --git a/sope-core/NGExtensions/GNUmakefile.preamble b/sope-core/NGExtensions/GNUmakefile.preamble
+index 998376c..39a3e90 100644
+--- a/sope-core/NGExtensions/GNUmakefile.preamble
++++ b/sope-core/NGExtensions/GNUmakefile.preamble
+@@ -22,9 +22,9 @@ endif
+ # dependencies
+ 
+ libNGExtensions_LIBRARIES_DEPEND_UPON += \
+-	-lEOControl -lDOM -lSaxObjC \
++	-lEOControl -lDOM \
+ 	-lobjc \
+-	-lz
++	-lz -lgnustep-base -lm
+ 
+ NGExtensions_LIBRARIES_DEPEND_UPON += \
+ 	-framework EOControl \
+diff --git a/sope-core/NGStreams/GNUmakefile.preamble b/sope-core/NGStreams/GNUmakefile.preamble
+index 46ff501..aff9fad 100644
+--- a/sope-core/NGStreams/GNUmakefile.preamble
++++ b/sope-core/NGStreams/GNUmakefile.preamble
+@@ -10,9 +10,7 @@ NGStreams_INCLUDE_DIRS += $(libNGStreams_INCLUDE_DIRS)
+ # dependencies
+ 
+ libNGStreams_LIBRARIES_DEPEND_UPON += \
+-	-lNGExtensions -lEOControl	\
+-	-lDOM -lSaxObjC			\
+-	-lz
++	-lz -lgnustep-base -lobjc
+ NGStreams_LIBRARIES_DEPEND_UPON += \
+ 	-framework NGExtensions -framework EOControl	\
+ 	-framework DOM -framework SaxObjC		\
+diff --git a/sope-gdl1/GDLAccess/GNUmakefile.preamble b/sope-gdl1/GDLAccess/GNUmakefile.preamble
+index bfa5143..afe4bf9 100644
+--- a/sope-gdl1/GDLAccess/GNUmakefile.preamble
++++ b/sope-gdl1/GDLAccess/GNUmakefile.preamble
+@@ -29,7 +29,7 @@ endif
+ 
+ # dependencies
+ 
+-libGDLAccess_LIBRARIES_DEPEND_UPON += -lEOControl
++libGDLAccess_LIBRARIES_DEPEND_UPON += -lEOControl -lgnustep-base -lobjc
+ GDLAccess_LIBRARIES_DEPEND_UPON    += -framework EOControl
+ 
+ ifneq ($(frameworks),yes)
+diff --git a/sope-gdl1/MySQL/GNUmakefile.preamble b/sope-gdl1/MySQL/GNUmakefile.preamble
+index 1d44fa3..a0c2005 100644
+--- a/sope-gdl1/MySQL/GNUmakefile.preamble
++++ b/sope-gdl1/MySQL/GNUmakefile.preamble
+@@ -33,7 +33,6 @@ endif
+ 
+ MySQL_BUNDLE_LIBS += \
+ 	-lGDLAccess	\
+-	-lEOControl	\
+ 	`mysql_config --libs`
+ 
+ MySQLD_BUNDLE_LIBS += \
+diff --git a/sope-ldap/NGLdap/GNUmakefile.preamble b/sope-ldap/NGLdap/GNUmakefile.preamble
+index 950e3e5..05103b2 100644
+--- a/sope-ldap/NGLdap/GNUmakefile.preamble
++++ b/sope-ldap/NGLdap/GNUmakefile.preamble
+@@ -15,7 +15,7 @@ ADDITIONAL_CPPFLAGS += -Wall -Wno-protocol
+ 
+ libNGLdap_LIBRARIES_DEPEND_UPON += \
+ 	-lNGExtensions -lEOControl	\
+-	-lDOM -lSaxObjC
++	-lgnustep-base -lobjc
+ NGLdap_LIBRARIES_DEPEND_UPON += \
+ 	-framework NGExtensions -framework EOControl	\
+ 	-framework DOM -framework SaxObjC
+diff --git a/sope-mime/GNUmakefile.preamble b/sope-mime/GNUmakefile.preamble
+index 3d6ec70..80d4600 100644
+--- a/sope-mime/GNUmakefile.preamble
++++ b/sope-mime/GNUmakefile.preamble
+@@ -1,3 +1,4 @@
++
+ # compilation settings
+ 
+ SOPE_ROOT=..
+@@ -19,7 +20,7 @@ libNGMime_INCLUDE_DIRS += \
+ 
+ libNGMime_LIBRARIES_DEPEND_UPON += \
+ 	-lNGStreams -lNGExtensions -lEOControl	\
+-	-lDOM -lSaxObjC
++	-lgnustep-base -lobjc
+ 
+ NGMime_LIBRARIES_DEPEND_UPON += \
+ 	-framework NGStreams -framework NGExtensions -framework EOControl \
+diff --git a/sope-xml/DOM/GNUmakefile.preamble b/sope-xml/DOM/GNUmakefile.preamble
+index 1087787..1d59173 100644
+--- a/sope-xml/DOM/GNUmakefile.preamble
++++ b/sope-xml/DOM/GNUmakefile.preamble
+@@ -33,7 +33,7 @@ ADDITIONAL_CPPFLAGS += \
+ ADDITIONAL_INCLUDE_DIRS += -I.. -I../..
+ 
+ 
+-libDOM_LIBRARIES_DEPEND_UPON += -lSaxObjC
++libDOM_LIBRARIES_DEPEND_UPON += -lSaxObjC -lgnustep-base -lobjc
+ 
+ ifneq ($(GNUSTEP_BUILD_DIR),)
+ libDOM_LIB_DIRS += -L$(GNUSTEP_BUILD_DIR)/../SaxObjC/$(GNUSTEP_OBJ_DIR_NAME)
+diff --git a/sope-xml/SaxObjC/GNUmakefile.preamble b/sope-xml/SaxObjC/GNUmakefile.preamble
+index b97eab9..bff95d1 100644
+--- a/sope-xml/SaxObjC/GNUmakefile.preamble
++++ b/sope-xml/SaxObjC/GNUmakefile.preamble
+@@ -77,3 +77,5 @@ endif
+ ifeq ($(GNUSTEP_TARGET_OS),cygwin32)
+ libSaxObjC_LIBRARIES_DEPEND_UPON += -lobjc
+ endif
++
++libSaxObjC_LIBRARIES_DEPEND_UPON += -lgnustep-base -lobjc
+diff --git a/sope-xml/XmlRpc/GNUmakefile.preamble b/sope-xml/XmlRpc/GNUmakefile.preamble
+index 9f47f46..3b15d5c 100644
+--- a/sope-xml/XmlRpc/GNUmakefile.preamble
++++ b/sope-xml/XmlRpc/GNUmakefile.preamble
+@@ -27,7 +27,7 @@ XmlRpc_HEADER_FILES = $(libXmlRpc_HEADER_FILES)
+ XmlRpc_OBJC_FILES   = $(libXmlRpc_OBJC_FILES)
+ 
+ 
+-libXmlRpc_LIBRARIES_DEPEND_UPON += -lSaxObjC -lDOM
++libXmlRpc_LIBRARIES_DEPEND_UPON += -lSaxObjC -lgnustep-base -lobjc
+ 
+ ifneq ($(GNUSTEP_BUILD_DIR),)
+ libXmlRpc_LIB_DIRS += \
+-- 

@@ -1,0 +1,4 @@
+0001-do-not-build-json.patch
+0002-use-gnutls.patch
+0003-link-everything-correctly.patch
+0004-close-all-fds-on-daemon-start.patch
