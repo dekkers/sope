@@ -5,7 +5,7 @@ Subject: do-not-build-json
 The SBJson library is packaged seperately.
 ---
  GNUmakefile |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/GNUmakefile b/GNUmakefile
 index b5068bb..a941f3e 100644

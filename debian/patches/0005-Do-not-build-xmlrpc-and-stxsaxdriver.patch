@@ -4,7 +4,7 @@ Subject: Do not build xmlrpc and stxsaxdriver
 
 ---
  sope-xml/GNUmakefile |    5 +----
- 1 files changed, 1 insertions(+), 4 deletions(-)
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/sope-xml/GNUmakefile b/sope-xml/GNUmakefile
 index 03ef81b..5d27f05 100644

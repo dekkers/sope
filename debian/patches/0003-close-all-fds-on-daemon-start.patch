@@ -4,7 +4,7 @@ Subject: close-all-fds-on-daemon-start
 
 ---
  .../NGObjWeb/WOWatchDogApplicationMain.m           |    7 ++++++-
- 1 files changed, 6 insertions(+), 1 deletions(-)
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m b/sope-appserver/NGObjWeb/WOWatchDogApplicationMain.m
 index 7293c36..d108382 100644
