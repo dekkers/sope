@@ -11,7 +11,7 @@ Subject: use-gnutls
  5 files changed, 162 insertions(+), 7 deletions(-)
 
 diff --git a/configure b/configure
-index 39310ea..bff7a30 100755
+index 40d822c..7988d81 100755
 --- a/configure
 +++ b/configure
 @@ -426,6 +426,7 @@ checkLinking() {
