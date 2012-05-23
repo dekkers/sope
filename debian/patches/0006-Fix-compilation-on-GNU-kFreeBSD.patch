@@ -1,0 +1,24 @@
+From: Jeroen Dekkers <jeroen@dekkers.ch>
+Date: Wed, 23 May 2012 16:09:44 +0200
+Subject: Fix compilation on GNU/kFreeBSD
+
+Origin: vendor
+Forwarded: http://www.sogo.nu/bugs/view.php?id=1817
+Author: Jeroen Dekkers <jeroen@dekkers.ch>
+---
+ sope-core/NGStreams/NGInternetSocketAddress.m |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sope-core/NGStreams/NGInternetSocketAddress.m b/sope-core/NGStreams/NGInternetSocketAddress.m
+index 552366d..221f900 100644
+--- a/sope-core/NGStreams/NGInternetSocketAddress.m
++++ b/sope-core/NGStreams/NGInternetSocketAddress.m
+@@ -48,7 +48,7 @@
+ #include "NGInternetSocketDomain.h"
+ #include "common.h"
+ 
+-#if defined(HAVE_GETHOSTBYNAME_R) && !defined(linux) && !defined(__FreeBSD__)
++#if defined(HAVE_GETHOSTBYNAME_R) && !defined(linux) && !defined(__FreeBSD__) && !defined(__GLIBC__)
+ #define USE_GETHOSTBYNAME_R 1
+ #endif
+ 
