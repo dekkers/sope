@@ -27,6 +27,7 @@ Section: libdevel
 Priority: extra
 Architecture: any
 Depends: libsope1 (= ${binary:Version}), ${misc:Depends}
+Conflicts: libgnustep-dl2-dev
 Description: SKYRiX Object Publishing Environment (development files)
  An extensive set of Objective-C frameworks which form a complete Web
  application server environment. Besides the Apple WebObjects
