@@ -1,0 +1,74 @@
+From: Wolfgang Sourdeau <wsourdeau@inverse.ca>
+Date: Thu, 24 May 2012 14:26:45 +0000
+Subject: Fix stale cache issue when upgrading
+
+Origin: upstream, http://mtn.inverse.ca/revision/info/b2721d7f18528c981a921065d3272cca1a9070e8
+---
+ sope-appserver/WEExtensions/ChangeLog           |    8 ++++++++
+ sope-appserver/WEExtensions/WEResourceManager.m |   15 ++++++++++-----
+ 2 files changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/sope-appserver/WEExtensions/ChangeLog b/sope-appserver/WEExtensions/ChangeLog
+index 771dc98..ff32f17 100644
+--- a/sope-appserver/WEExtensions/ChangeLog
++++ b/sope-appserver/WEExtensions/ChangeLog
+@@ -1,3 +1,11 @@
++2012-05-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
++
++	* WEResourceManager.m
++	(_urlForResourceNamed:inFramework:language:applicationName:):
++	append "lm=" + the unix timestamp of the file last modification
++	date to force a reload of the file each time it is modified, no
++	matter what expiry date the browsers are using in their cache.
++
+ 2010-01-29  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+ 
+ 	* WEResourceManager.m
+diff --git a/sope-appserver/WEExtensions/WEResourceManager.m b/sope-appserver/WEExtensions/WEResourceManager.m
+index a7ed87f..03aa8b5 100644
+--- a/sope-appserver/WEExtensions/WEResourceManager.m
++++ b/sope-appserver/WEExtensions/WEResourceManager.m
+@@ -575,8 +575,7 @@ checkCache(NSDictionary *_cache, WEResourceKey *_key,
+       }
+       [ms appendString:_name];
+       
+-      url = [ms copy];
+-      [ms release]; ms = nil;
++      url = ms;
+       if (debugOn) [self debugWithFormat:@"FOUND: '%@'", url];
+       goto done;
+     }
+@@ -589,6 +588,7 @@ checkCache(NSDictionary *_cache, WEResourceKey *_key,
+   while ((path = [e nextObject])) {
+     NSMutableString *ms;
+     NSString *fpath, *basepath;
++    NSDate *lastModified;
+     
+     /* check language */
+     if (_lang) {
+@@ -608,7 +608,11 @@ checkCache(NSDictionary *_cache, WEResourceKey *_key,
+     
+     if (![fm fileExistsAtPath:fpath])
+       continue;
+-      
++
++    lastModified = [[fm fileAttributesAtPath: fpath
++                                traverseLink: YES]
++                     fileModificationDate];
++
+     ms = [[NSMutableString alloc] initWithCapacity:256];
+       
+     if (prefix) [ms appendString:prefix];
+@@ -622,9 +626,10 @@ checkCache(NSDictionary *_cache, WEResourceKey *_key,
+       [ms appendString:@".lproj/"];
+     }
+     [ms appendString:_name];
++    [ms appendFormat: @"?lm=%u",
++        (NSUInteger) [lastModified timeIntervalSince1970]];
+       
+-    url = [ms copy];
+-    [ms release]; ms = nil;
++    url = ms;
+     if (debugOn) [self debugWithFormat:@"FOUND: '%@'", url];
+     goto done;
+   }

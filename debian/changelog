@@ -1,3 +1,13 @@
+sope (1.3.15-2) unstable; urgency=low
+
+  * 0007-Fix-FTBFS-on-arm.patch:
+    - Fix FTBFS on arm that was introduced in the last upstream version.
+  * 0008-Fix-stale-cache-issue-when-upgrading.patch:
+    - Cherry-pick patch from upstream that fixes problems with stale
+      browser caches on upgrades.
+
+ -- Jeroen Dekkers <jeroen@dekkers.ch>  Mon, 28 May 2012 16:38:50 +0200
+
 sope (1.3.15-1) unstable; urgency=low
 
   * New upstream release.
