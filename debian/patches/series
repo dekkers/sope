@@ -6,3 +6,4 @@
 0006-Fix-compilation-on-GNU-kFreeBSD.patch
 0007-Fix-FTBFS-on-arm.patch
 0008-Fix-stale-cache-issue-when-upgrading.patch
+0009-GNUstep-1.24-fix.patch
