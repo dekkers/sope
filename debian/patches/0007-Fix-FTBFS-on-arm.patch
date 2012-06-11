@@ -5,19 +5,35 @@ Subject: Fix FTBFS on arm
 Forwarded: http://www.sogo.nu/bugs/view.php?id=1820
 Author: Jeroen Dekkers <jeroen@dekkers.ch>
 ---
- .../GDLAccess/FoundationExt/PrintfFormatScanner.m  |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../GDLAccess/FoundationExt/PrintfFormatScanner.m  |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m b/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
-index 7d4a248..de90910 100644
+index 7d4a248..20c8a9b 100644
 --- a/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
 +++ b/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
-@@ -33,7 +33,7 @@
+@@ -32,12 +32,18 @@
+     va_list va;
  
  #ifdef __va_copy
-     // args being NULL breaks heavily on amd64
+-    // args being NULL breaks heavily on amd64
 -    if (args != NULL) {
-+    if (args) {
-         __va_copy(va, args);
-     } else {
- 	return format;
+-        __va_copy(va, args);
+-    } else {
+-	return format;
+-    }
++    // args being NULL breaks heavily on amd64. It shouldn't be
++    // possible to be NULL at all, but we're called with an array as
++    // argument instead of a va_list in EOSQLQualifier and are thus
++    // calling __va_copy on an array, which is something that really
++    // shouldn't be done. Checking whether args is NULL breaks on arm
++    // however, because a va_list isn't a pointer, so we don't do the
++    // check on arm.
++#ifndef __arm__
++    if (!args)
++      return format;
++#endif
++    __va_copy(va, args);
+ #else
+     va = args;
+ #endif
