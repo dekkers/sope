@@ -1,3 +1,14 @@
+sope (1.3.16-1) unstable; urgency=low
+
+  * New upstream release.
+  * Drop patches applied upstream:
+    - 0006-Fix-compilation-on-GNU-kFreeBSD
+    - 0008-Fix-stale-cache-issue-when-upgrading.patch
+    - 0009-GNUstep-1.24-fix.patch
+  * Build with hardening enabled.
+
+ -- Jeroen Dekkers <jeroen@dekkers.ch>  Fri, 29 Jun 2012 20:53:29 +0200
+
 sope (1.3.15-4) unstable; urgency=low
 
   * 0007-Fix-FTBFS-on-arm.patch:
