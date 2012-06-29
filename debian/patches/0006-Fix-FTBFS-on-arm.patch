@@ -9,7 +9,7 @@ Author: Jeroen Dekkers <jeroen@dekkers.ch>
  1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m b/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
-index 7d4a248..20c8a9b 100644
+index de90910..20c8a9b 100644
 --- a/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
 +++ b/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
 @@ -32,12 +32,18 @@
@@ -17,7 +17,7 @@ index 7d4a248..20c8a9b 100644
  
  #ifdef __va_copy
 -    // args being NULL breaks heavily on amd64
--    if (args != NULL) {
+-    if (args) {
 -        __va_copy(va, args);
 -    } else {
 -	return format;

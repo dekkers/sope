@@ -3,7 +3,4 @@
 0003-close-all-fds-on-daemon-start.patch
 0004-link-everything-correctly.patch
 0005-Do-not-build-xmlrpc-and-stxsaxdriver.patch
-0006-Fix-compilation-on-GNU-kFreeBSD.patch
-0007-Fix-FTBFS-on-arm.patch
-0008-Fix-stale-cache-issue-when-upgrading.patch
-0009-GNUstep-1.24-fix.patch
+0006-Fix-FTBFS-on-arm.patch
