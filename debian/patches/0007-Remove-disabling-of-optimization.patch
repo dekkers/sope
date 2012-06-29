@@ -1,0 +1,77 @@
+From: Jeroen Dekkers <jeroen@dekkers.ch>
+Date: Fri, 29 Jun 2012 17:50:29 +0200
+Subject: Remove disabling of optimization
+
+Origin: vendor
+---
+ sope-appserver/NGObjWeb/DynamicElements/GNUmakefile.preamble |    6 ------
+ sope-xml/DOM/GNUmakefile.preamble                            |    7 -------
+ sope-xml/SaxObjC/GNUmakefile.preamble                        |    5 -----
+ sope-xml/XmlRpc/GNUmakefile.preamble                         |    3 ---
+ 4 files changed, 21 deletions(-)
+
+diff --git a/sope-appserver/NGObjWeb/DynamicElements/GNUmakefile.preamble b/sope-appserver/NGObjWeb/DynamicElements/GNUmakefile.preamble
+index 7cbf560..415c8f6 100644
+--- a/sope-appserver/NGObjWeb/DynamicElements/GNUmakefile.preamble
++++ b/sope-appserver/NGObjWeb/DynamicElements/GNUmakefile.preamble
+@@ -5,12 +5,6 @@ ADDITIONAL_CPPFLAGS += -pipe
+ # -DPROFILE_CLUSTERS=1
+ 
+ 
+-# disable optimization for exception handlers
+-SaxDefaultHandler.m_FILE_FILTER_OUT_FLAGS = -O%
+-WOCompoundElement.m_FILE_FILTER_OUT_FLAGS = -O%
+-WOImage.m_FILE_FILTER_OUT_FLAGS           = -O%
+-
+-
+ ADDITIONAL_CPPFLAGS += -pipe -Wall -funsigned-char -O2
+ ADDITIONAL_CPPFLAGS += -DCOMPILING_NGOBJWEB=1
+ 
+diff --git a/sope-xml/DOM/GNUmakefile.preamble b/sope-xml/DOM/GNUmakefile.preamble
+index 1d59173..74e4343 100644
+--- a/sope-xml/DOM/GNUmakefile.preamble
++++ b/sope-xml/DOM/GNUmakefile.preamble
+@@ -16,13 +16,6 @@ DOM_HEADER_FILES = $(libDOM_HEADER_FILES)
+ DOM_OBJC_FILES   = $(libDOM_OBJC_FILES)
+ 
+ 
+-# disable optimization for exception handlers
+-DOMPYXOutputter.m_FILE_FILTER_OUT_FLAGS        = -O%
+-DOMXMLOutputter.m_FILE_FILTER_OUT_FLAGS        = -O%
+-DOMQueryPathExpression.m_FILE_FILTER_OUT_FLAGS = -O%
+-DOMSaxHandler.m_FILE_FILTER_OUT_FLAGS          = -O%
+-NSObject+QPEval.m_FILE_FILTER_OUT_FLAGS        = -O%
+-
+ ADDITIONAL_CPPFLAGS += \
+ 	-O2 \
+         -Wall -DCOMPILE_FOR_GSTEP_MAKE=1        \
+diff --git a/sope-xml/SaxObjC/GNUmakefile.preamble b/sope-xml/SaxObjC/GNUmakefile.preamble
+index bff95d1..ff23aba 100644
+--- a/sope-xml/SaxObjC/GNUmakefile.preamble
++++ b/sope-xml/SaxObjC/GNUmakefile.preamble
+@@ -16,11 +16,6 @@ libSaxObjC_HEADER_FILES_INSTALL_DIR = /SaxObjC
+ SaxObjC_HEADER_FILES = $(libSaxObjC_HEADER_FILES)
+ SaxObjC_OBJC_FILES   = $(libSaxObjC_OBJC_FILES)
+ 
+-# disable optimization for exception handlers
+-SaxDefaultHandler.m_FILE_FILTER_OUT_FLAGS = -O%
+-SaxHandlerBase.m_FILE_FILTER_OUT_FLAGS    = -O%
+-SaxObjectDecoder.m_FILE_FILTER_OUT_FLAGS  = -O%
+-
+ ADDITIONAL_CPPFLAGS += \
+ 	-O2 \
+         -Wall -DCOMPILE_FOR_GSTEP_MAKE=1        \
+diff --git a/sope-xml/XmlRpc/GNUmakefile.preamble b/sope-xml/XmlRpc/GNUmakefile.preamble
+index 3b15d5c..ba06dae 100644
+--- a/sope-xml/XmlRpc/GNUmakefile.preamble
++++ b/sope-xml/XmlRpc/GNUmakefile.preamble
+@@ -11,9 +11,6 @@ XmlRpc_INTERFACE_VERSION=$(MAJOR_VERSION).$(MINOR_VERSION)
+ XmlRpc_VERSION=$(MAJOR_VERSION).$(MINOR_VERSION).$(SUBMINOR_VERSION)
+ 
+ 
+-# disable optimization for exception handlers
+-NSObject+XmlRpc.m_FILE_FILTER_OUT_FLAGS = -O%
+-
+ ADDITIONAL_CPPFLAGS += \
+ 	-O2 \
+         -Wall -DCOMPILE_FOR_GSTEP_MAKE=1        \
