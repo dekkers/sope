@@ -1,5 +1,7 @@
 /*
-  Copyright (C) 2000-2005 SKYRIX Software AG
+  Copyright (C) 2012 Inverse inc
+ 
+  Author: Wolfgang Sourdeau <wsourdeau@inverse.ca>
 
   This file is part of SOPE.
 
@@ -19,25 +21,10 @@
   02111-1307, USA.
 */
 
-#ifndef __NGExtensions_NGMemoryAllocation_H__
-#define __NGExtensions_NGMemoryAllocation_H__
+#import <Foundation/NSData.h>
 
-#if !(__GNU_LIBOBJC__ >= 20100911)
-#include <objc/objc-api.h>
-#endif
+@interface NSData (NGRFC822)
 
-#include <stdlib.h>
+- (NSData *) dataByEnsuringCRLFLineEndings;
 
-#if LIB_FOUNDATION_BOEHM_GC
-#  define NGMalloc       objc_malloc
-#  define NGMallocAtomic objc_atomic_malloc
-#  define NGFree         objc_free
-#  define NGRealloc      objc_realloc
-#else
-#  define NGMalloc       malloc
-#  define NGMallocAtomic malloc
-#  define NGFree         free
-#  define NGRealloc      realloc
-#endif
-
-#endif /* __NGExtensions_NGMemoryAllocation_H__ */
+@end

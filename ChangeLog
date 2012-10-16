@@ -1,3 +1,30 @@
+2012-05-09  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* sope-core/NGStreams/NGCTextStream.m and:1
+	sope-mime/NGImap4/NGImap4Client.m - we now permit setting
+	the encoding instead of using the default one in NGCTextStream
+	as whenever we APPEND a message over IMAP, we use
+	NSISOLatin1StringEncoding while SOGo forces NSUTF8StringEncoding. This
+	create size mismatches and literal errors during the APPEND operation.
+
+2012-05-01  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* sope-mime/NGMime/NSData+RFC822.m: new category module for rfc822
+	utility methods.
+
+2012-04-19  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* sope-gdl1/PostgreSQL/PGConnection.m
+	(-connectWithHostName:port:options:tty:database:login:password:)
+	(-connectWithInfo:): make sure that "standard_conforming_strings"
+	is set to 'on' for new connections.
+
+2012-03-23  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+    * Applied patch for bug http://www.sogo.nu/bugs/view.php?id=1670
+	* Applied patch for bug http://www.sogo.nu/bugs/view.php?id=1671
+	* Applied patch for bug http://www.sogo.nu/bugs/view.php?id=1672
+
 2012-03-22  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* sope-appserver/NGObjWeb/UnixSignalHandler.{h,m} - entirely
