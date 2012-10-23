@@ -5,11 +5,25 @@ Subject: Fix FTBFS on arm
 Forwarded: http://www.sogo.nu/bugs/view.php?id=1820
 Author: Jeroen Dekkers <jeroen@dekkers.ch>
 ---
- .../GDLAccess/FoundationExt/PrintfFormatScanner.m  |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ sope-gdl1/GDLAccess/EOSQLQualifier.m                 |    2 +-
+ .../GDLAccess/FoundationExt/PrintfFormatScanner.m    |   18 ++++++++++++------
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
+diff --git a/sope-gdl1/GDLAccess/EOSQLQualifier.m b/sope-gdl1/GDLAccess/EOSQLQualifier.m
+index ebf26a6..66acd25 100644
+--- a/sope-gdl1/GDLAccess/EOSQLQualifier.m
++++ b/sope-gdl1/GDLAccess/EOSQLQualifier.m
+@@ -328,7 +328,7 @@ static EONull *null          = nil;
+           back to an array (the EOQualifierEnumScannerHandler does that).
+           Works on ix86, but *NOT* on iSeries or zServer !!
+   */
+-#if defined(__s390__) || defined(__arm__)
++#if defined(__s390__) || defined(__arm__) || defined(__alpha__)
+   qualifierString =
+     [formatScanner performSelector:@selector(stringWithFormat:arguments:)
+                    withObject:_qualifierFormat
 diff --git a/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m b/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
-index de90910..20c8a9b 100644
+index de90910..d719be8 100644
 --- a/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
 +++ b/sope-gdl1/GDLAccess/FoundationExt/PrintfFormatScanner.m
 @@ -32,12 +32,18 @@
@@ -27,9 +41,9 @@ index de90910..20c8a9b 100644
 +    // argument instead of a va_list in EOSQLQualifier and are thus
 +    // calling __va_copy on an array, which is something that really
 +    // shouldn't be done. Checking whether args is NULL breaks on arm
-+    // however, because a va_list isn't a pointer, so we don't do the
-+    // check on arm.
-+#ifndef __arm__
++    // and alpha however, because a va_list isn't a pointer, so we
++    // don't do the check on arm and alpha.
++#if !defined(__arm__) && !defined(__alpha__)
 +    if (!args)
 +      return format;
 +#endif
