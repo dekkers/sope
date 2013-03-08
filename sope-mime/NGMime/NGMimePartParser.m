@@ -95,10 +95,6 @@ static Class NSMutableDataClass = NULL;
 
 static NGMimeHeaderNames *HeaderNames = NULL;
 
-+ (int)version {
-  return 3;
-}
-
 static int MimeLogEnabled = -1;
 
 + (void)initialize {
@@ -158,11 +154,13 @@ static inline BOOL _checkKey(NGMimePartParser *self, NGHashMap *_map,
   if ((self = [super init])) {
     self->bufLen        = 1024;
     self->contentLength = -1;
+    self->delegate = nil;
   }
   return self;
 }
 
 - (void)dealloc {
+  [self->delegate release];
   [self->contentTransferEncoding release];
   [self->source     release];
   [self->sourceData release];
@@ -172,7 +170,7 @@ static inline BOOL _checkKey(NGMimePartParser *self, NGHashMap *_map,
 /* accessors */
 
 - (void)setDelegate:(id)_delegate {
-  self->delegate = _delegate;
+  ASSIGN(self->delegate, _delegate);
 
   self->delegateRespondsTo.parserWillParseHeader =
     [self->delegate respondsToSelector:@selector(parserWillParseHeader:)];

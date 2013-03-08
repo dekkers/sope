@@ -109,9 +109,6 @@ static Class         CompoundElemClass = Nil;
 static NSNumber      *yesNum   = nil;
 static WOAssociation *yesAssoc = nil;
 
-+ (int)version {
-  return 1;
-}
 + (void)initialize {
   NSUserDefaults  *ud;
   NGLoggerManager *lm;
@@ -400,12 +397,10 @@ static WOAssociation *yesAssoc = nil;
 }
 
 - (WOAssociation *)associationForAttribute:(id<DOMAttr>)_attribute {
-  NSString      *nsuri;
   NSString      *value;
   WOAssociation *assoc;
   Class c;
   
-  nsuri = [_attribute namespaceURI];
   value = [_attribute nodeValue];
   
   c = [self associationClassForNamespaceURI:[_attribute namespaceURI]];

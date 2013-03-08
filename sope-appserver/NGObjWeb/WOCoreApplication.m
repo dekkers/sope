@@ -76,10 +76,6 @@ static Class    NSDateClass      = Nil;
 static NGLogger *logger          = nil;
 static NGLogger *perfLogger      = nil;
 
-+ (int)version {
-  return 1;
-}
-
 NGObjWeb_DECLARE id WOApp = nil;
 static NSMutableArray *activeApps = nil; // THREAD
 
@@ -190,11 +186,13 @@ static NSMutableArray *activeApps = nil; // THREAD
     }
     
     /* handle signals */
-    signal(SIGTERM, handle_terminate);
-    signal(SIGINT, handle_terminate);
-    signal(SIGQUIT, handle_terminate);
-    signal(SIGILL, handle_terminate);
-    signal(SIGHUP, handle_reload);
+    if ([self shouldSetupSignalHandlers]) {
+      signal(SIGTERM, handle_terminate);
+      signal(SIGINT, handle_terminate);
+      signal(SIGQUIT, handle_terminate);
+      signal(SIGILL, handle_terminate);
+      signal(SIGHUP, handle_reload);
+    }
     
     controlSocket = nil;
     listeningSocket = nil;
@@ -216,6 +214,11 @@ static NSMutableArray *activeApps = nil; // THREAD
   [self->listeningSocket release];
   [self->controlSocket release];
   [super dealloc];
+}
+
+- (BOOL) shouldSetupSignalHandlers
+{
+  return YES;
 }
 
 /* Watchdog helpers */

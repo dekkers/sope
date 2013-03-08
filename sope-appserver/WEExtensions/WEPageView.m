@@ -117,10 +117,6 @@ static NSNumber *YesNumber = nil;
   if (YesNumber == nil) YesNumber = [[NSNumber numberWithBool:YES] retain];
 }
 
-+ (int)version {
-  return [super version] + 0;
-}
-
 - (id)initWithName:(NSString *)_name
   associations:(NSDictionary *)_config
   template:(WOElement *)_subs
@@ -444,7 +440,6 @@ static inline NSString *WEPageLabelForKey(NSString *_key, WOContext *_ctx) {
 - (void)appendToResponse:(WOResponse *)_response inContext:(WOContext *)_ctx {
   WOComponent    *cmp;
   BOOL           indentContent;
-  BOOL           doForm;
   NSString       *bgcolor;
   id             nestedState;
   NSString       *activeKey;
@@ -459,7 +454,6 @@ static inline NSString *WEPageLabelForKey(NSString *_key, WOContext *_ctx) {
   
   [self updateConfigInContext:_ctx];
   
-  doForm        = NO;  /* generate form controls ? */
   indentContent = YES; /* put additional padding table into content */
   cmp           = [_ctx component];
   
@@ -634,10 +628,6 @@ static inline NSString *WEPageLabelForKey(NSString *_key, WOContext *_ctx) {
 @end /* WEPageView */
 
 @implementation WEPageItem
-
-+ (int)version {
-  return [super version] + 0;
-}
 
 - (id)initWithName:(NSString *)_name
   associations:(NSDictionary *)_config

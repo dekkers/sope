@@ -44,15 +44,8 @@
 
 static BOOL debugOn = NO;
 
-+ (int)version {
-  return [super version] + 0 /* v0 */;
-}
 + (void)initialize {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  
-  NSAssert2([super version] == 0,
-            @"invalid superclass (%@) version %i !",
-            NSStringFromClass([self superclass]), [super version]);
   
   if ((debugOn = [ud boolForKey:@"NGImap4FileManagerDebugEnabled"]))
     NSLog(@"NGImap4FileManager debugging is enabled.");
@@ -136,7 +129,6 @@ static BOOL debugOn = NO;
   password:(NSString *)_pwd
   host:(NSString *)_host
 {
-  NSException  *loginException;
   NSDictionary *conDict;
   
   [self->imapContext   release]; self->imapContext   = nil;
@@ -148,8 +140,6 @@ static BOOL debugOn = NO;
                             _pwd  ? _pwd  : (NSString *)@"",         @"passwd",
                             _host ? _host : (NSString *)@"localhost", @"host",
                             nil];
-  
-  loginException = nil;
   
   self->imapContext =
     [[NGImap4Context alloc] initWithConnectionDictionary:conDict];

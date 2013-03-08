@@ -193,7 +193,6 @@ static EONull *null          = nil;
 {
   NSArray        *componentRelationships = nil;
   EOSQLQualifier *qualifier              = nil;
-  NSArray        *sourceAttributes       = nil;
   id             tmpRelationship         = nil;
   EOAttribute    *sourceAttribute        = nil;
   EOAttribute    *destinationAttribute   = nil;
@@ -213,13 +212,6 @@ static EONull *null          = nil;
 
   if (componentRelationships) {
     tmpRelationship = [componentRelationships objectAtIndex:0];
-        
-    sourceAttributes =
-      [NSArray arrayWithObject:[tmpRelationship sourceAttribute]];
-  }
-  else {
-    sourceAttributes =
-      [NSArray arrayWithObject:[relationship sourceAttribute]];
   }
 
   sourceAttribute = [tmpRelationship sourceAttribute];
@@ -328,7 +320,7 @@ static EONull *null          = nil;
           back to an array (the EOQualifierEnumScannerHandler does that).
           Works on ix86, but *NOT* on iSeries or zServer !!
   */
-#if defined(__s390__) || defined(__arm__)
+#if defined(__s390__) || defined(__arm__) || defined(__alpha__)
   qualifierString =
     [formatScanner performSelector:@selector(stringWithFormat:arguments:)
                    withObject:_qualifierFormat

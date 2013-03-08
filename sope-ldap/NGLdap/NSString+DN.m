@@ -21,6 +21,9 @@
 */
 
 #import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSArray.h>
+
+#include <ldap.h>
 
 #include "NSString+DN.h"
 #include <NGExtensions/NSString+Ext.h>
@@ -54,8 +57,55 @@ static NSArray *cleanDNComponents(NSArray *_components) {
   return [cleanDNComponents(_components) componentsJoinedByString:dnSeparator];
 }
 
+/* returns each dn component in a NSArray 
+ * returns nil if there is a decoding error
+ */
 - (NSArray *)dnComponents {
-  return cleanDNComponents([self componentsSeparatedByString:dnSeparator]);
+  char *componentStr;
+  int i, err;
+
+  LDAPDN dn;
+
+  NSMutableArray *components;
+
+  if (![self length])
+    return nil;
+
+  dn = NULL;
+  components = [NSMutableArray arrayWithCapacity:0];
+
+  err = ldap_str2dn([self cStringUsingEncoding: NSUTF8StringEncoding],
+                    &dn, LDAP_DN_FORMAT_LDAPV3);
+  if(err) {
+    /* sorry for the noise but this has to be known */
+    NSLog(@"ldap_str2dn: %s\n", ldap_err2string(err));
+    ldap_dnfree(dn);
+    return nil;
+  }
+    
+  /* loop through the dn parts
+   * convert them back to properly quoted/escaped strings 
+   */
+  for (i=0; dn[i]; i++) {
+    componentStr = NULL;
+    err = ldap_rdn2str(dn[i], &componentStr,
+                       LDAP_DN_FORMAT_LDAPV3 | LDAP_DN_PRETTY);
+    if(err) {
+      NSLog(@"ldap_rdn2dn: %s\n", ldap_err2string(err));
+      ldap_dnfree(dn);
+      return nil;
+    }
+
+    if(componentStr) {
+      [components addObject:
+                    [NSString stringWithCString: componentStr
+                                       encoding: NSUTF8StringEncoding]];
+      free(componentStr);
+    }
+  }
+
+  ldap_dnfree(dn);
+  return [NSArray arrayWithArray: components];
 }
 
 - (NSString *)stringByAppendingDNComponent:(NSString *)_component {
@@ -69,22 +119,31 @@ static NSArray *cleanDNComponents(NSArray *_components) {
 }
 
 - (NSString *)stringByDeletingLastDNComponent {
-  NSRange r;
-  
-  r = [self rangeOfString:dnSeparator];
-  if (r.length == 0) return nil;
-  
-  return [[self substringFromIndex:(r.location + r.length)]
-                stringByTrimmingWhiteSpaces];
+  NSMutableArray *components;
+
+  components = [NSMutableArray arrayWithArray: [self dnComponents]];
+  if (![components count])
+    return nil;
+
+  /* "Last DN component" is actually the first component :
+   * For "cn=bob,ou=users,dc=example,dc=com", remove "cn=bob"
+   */
+  [components removeObjectAtIndex: 0];
+
+  return [components componentsJoinedByString:dnSeparator];
 }
 
 - (NSString *)lastDNComponent {
-  NSRange r;
-  
-  r = [self rangeOfString:dnSeparator];
-  if (r.length == 0) return nil;
-  
-  return [[self substringToIndex:r.location] stringByTrimmingWhiteSpaces];
+  NSMutableArray *components;
+
+  components = [NSMutableArray arrayWithArray: [self dnComponents]];
+  if (![components count])
+    return nil;
+
+  /* "Last DN component" is actually the first component :
+   * For "cn=bob,ou=users,dc=example,dc=com", return "cn=bob"
+   */
+  return [components objectAtIndex: 0];
 }
 
 - (const char *)ldapRepresentation {

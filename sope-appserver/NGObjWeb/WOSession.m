@@ -33,7 +33,7 @@
 #include "common.h"
 #include <string.h>
 
-#if (defined(__GNU_LIBOBJC__) && (__GNU_LIBOBJC__ >= 20100911)) || defined(APPLE_RUNTIME) || defined(__GNUSTEP_RUNTIME__)
+#if !defined(sel_get_name) && ((defined(__GNU_LIBOBJC__) && (__GNU_LIBOBJC__ >= 20100911)) || defined(APPLE_RUNTIME) || defined(__GNUSTEP_RUNTIME__))
 #  define sel_get_name sel_getName
 #endif
 
@@ -59,10 +59,6 @@ NGObjWeb_DECLARE
   NSString *WOSessionDidTerminateNotification = @"WOSessionDidTerminate";
 
 @implementation WOSession
-
-+ (int)version {
-  return 5;
-}
 
 static int   profileComponents = -1;
 static int   logPageCache      = -1;

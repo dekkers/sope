@@ -19,7 +19,7 @@ libNGMime_INCLUDE_DIRS += \
 
 libNGMime_LIBRARIES_DEPEND_UPON += \
 	-lNGStreams -lNGExtensions -lEOControl	\
-	-lDOM -lSaxObjC
+	$(BASE_LIBS)
 
 NGMime_LIBRARIES_DEPEND_UPON += \
 	-framework NGStreams -framework NGExtensions -framework EOControl \
@@ -55,14 +55,4 @@ endif
 ifeq ($(FOUNDATION_LIB),apple)
 libNGMime_PREBIND_ADDR="0xC1A00000"
 libNGMime_LDFLAGS += -seg1addr $(libNGMime_PREBIND_ADDR)
-endif
-
-# Windows
-
-ifeq ($(GNUSTEP_TARGET_OS),mingw32)
-libNGMime_LIBRARIES_DEPEND_UPON += -lFoundation -lobjc
-endif
-
-ifeq ($(GNUSTEP_TARGET_OS),cygwin32)
-libNGMime_LIBRARIES_DEPEND_UPON += -lFoundation -lobjc
 endif

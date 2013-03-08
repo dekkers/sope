@@ -100,9 +100,6 @@ static NGLogger *debugLogger       = nil;
 static NGLogger *perfLogger        = nil;
 static NGLogger *transActionLogger = nil;
 
-+ (int)version {
-  return 2;
-}
 + (void)initialize {
   NSUserDefaults  *ud;
   NGLoggerManager *lm;
@@ -198,8 +195,8 @@ static NGLogger *transActionLogger = nil;
   if (perfLogger) {
       struct timeval tv;
       gettimeofday(&tv, NULL);
-      self->t = (((double)tv.tv_sec) * ((double)tv.tv_usec) / 1000.0)  - 
-        self->t;
+      self->t = (((double)tv.tv_sec) + ((double)tv.tv_usec)
+                 / 1000000.0) - self->t;
       [perfLogger logWithFormat:@"processing of request took %4.3fs.", 
 	                  self->t < 0.0 ? -self->t : self->t];
   }
@@ -350,11 +347,14 @@ static int logCounter = 0;
         auth =
           [NGHttpCredentials credentialsWithString:[auth stringValue]];
       }
-            
-      [woRequest setHeader:[auth userName]
-                 forKey:@"x-webobjects-remote-user"];
-      [woRequest setHeader:[auth scheme]
-                 forKey:@"x-webobjects-auth-type"];
+       
+      if ([auth userName])
+        [woRequest setHeader:[auth userName]
+                      forKey:@"x-webobjects-remote-user"];
+      
+      if ([auth scheme])
+        [woRequest setHeader:[auth scheme]
+                      forKey:@"x-webobjects-auth-type"];
     }
   }
 }

@@ -48,7 +48,7 @@ static WOMessageProfileInfo profiletot = { 0, 0, 0, 0, 0 };
 
 + (void)initialize {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  
+   
   if (NSStringClass == Nil)
     NSStringClass = [NSString class];
   
@@ -68,27 +68,6 @@ static WOMessageProfileInfo profiletot = { 0, 0, 0, 0, 0 };
   }
 }
 
-static inline void _ensureBody(WOMessage *self) {
-  if (self->content == nil) {
-    self->content = [[NSMutableData alloc] initWithCapacity:DEF_CONTENT_SIZE];
-    self->addBytes = (void *)
-      [self->content methodForSelector:@selector(appendBytes:length:)];
-  }
-}
-
-static __inline__ NSMutableData *_checkBody(WOMessage *self) {
-  if (self->content == nil) {
-    self->content = [[NSMutableData alloc] initWithCapacity:DEF_CONTENT_SIZE];
-    self->addBytes = (void *)
-      [self->content methodForSelector:@selector(appendBytes:length:)];
-  }
-  return self->content;
-}
-
-+ (int)version {
-  return 5;
-}
-
 + (void)setDefaultEncoding:(NSStringEncoding)_encoding {
   defaultEncoding = _encoding;
 }
@@ -99,11 +78,17 @@ static __inline__ NSMutableData *_checkBody(WOMessage *self) {
 - (id)init {
   if ((self = [super init])) {
     self->contentEncoding = [[self class] defaultEncoding];
-    
+    self->content = [[NSMutableData alloc] initWithCapacity:DEF_CONTENT_SIZE];
+
+    self->addBytes = (void *)
+      [self->content methodForSelector:@selector(appendBytes:length:)];
+
     self->addChar = (void*)
       [self methodForSelector:@selector(appendContentCharacter:)];
     self->addStr  = (void *)
       [self methodForSelector:@selector(appendContentString:)];
+    self->addBytesLen = (void *)
+      [self methodForSelector:@selector(appendContentBytes:length:)];
     self->addHStr = (void *)
       [self methodForSelector:@selector(appendContentHTMLString:)];
     self->addCStr = (void *)
@@ -375,7 +360,6 @@ static __inline__ NSMutableData *_checkBody(WOMessage *self) {
 
 - (void)appendContentBytes:(const void *)_bytes length:(unsigned)_l {
   if (_bytes == NULL || _l == 0) return;
-  if (self->content == nil) _ensureBody(self);
   self->addBytes(self->content, @selector(appendBytes:length:), _bytes, _l);
 }
 
@@ -385,7 +369,6 @@ static __inline__ NSMutableData *_checkBody(WOMessage *self) {
   profile.appendChr++;
   
   *(&bc[0]) = _c;
-  if (self->content == nil) _ensureBody(self);
   
   switch (self->contentEncoding) {
     case NSISOLatin1StringEncoding:
@@ -428,7 +411,7 @@ static __inline__ NSMutableData *_checkBody(WOMessage *self) {
 }
 - (void)appendContentData:(NSData *)_data {
   if (_data == nil) return;
-  [_checkBody(self) appendData:_data];
+  [self->content appendData:_data];
 }
 
 - (void)appendContentHTMLAttributeValue:(NSString *)_value {
@@ -460,7 +443,6 @@ static __inline__ NSMutableData *_checkBody(WOMessage *self) {
 
   profile.appendC++;
 
-  if (self->content == nil) _ensureBody(self);
   if ((len = _value ? strlen((char *)_value) : 0) == 0)
     return;
   

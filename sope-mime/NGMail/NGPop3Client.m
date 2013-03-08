@@ -27,10 +27,6 @@
 
 @implementation NGPop3Client
 
-+ (int)version {
-  return 2;
-}
-
 + (id)pop3Client {
   NGActiveSocket *s;
   
@@ -512,13 +508,7 @@
                 intArgument:_numberOfLines];
   if ([reply isPositive]) {
     NSMutableData *data = nil;
-    const char    *cstr = index([[reply line] cString], ' ');
-    int  msgSize = -1;
 
-    if (cstr) {
-      cstr++;
-      msgSize = atoi(cstr);
-    }
     data = [NSMutableData dataWithCapacity:1024];
 
     if ([self receiveMultilineReply:data])

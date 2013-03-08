@@ -27,14 +27,7 @@ static Class StrClass = Nil;
 
 @implementation WECalendarField
 
-+ (int)version {
-  return [super version] + 0 /* v2 */;
-}
-
 + (void)initialize {
-  NSAssert2([super version] == 2,
-            @"invalid superclass (%@) version %i !",
-            NSStringFromClass([self superclass]), [super version]);
   StrClass = [NSString class];
 }
 
@@ -212,14 +205,12 @@ static NSString *retStr02ForInt(int i) {
   WEClientCapabilities *ccaps;
   NSString *tmp;
   int      i;
-  NSString *userAgent;
   BOOL     isMSIE;
   NSString *divID;
   NSString *img;
   NSString *elementId;
 
   ccaps     = [[_ctx request] clientCapabilities];
-  userAgent = [[_ctx request] headerForKey: @"user-agent"];
   isMSIE    = [ccaps isInternetExplorer];
   elementId = [self elementIdWithSuffix:_elementIDComponent ctx:_ctx];
   
@@ -373,7 +364,6 @@ static NSString *retStr02ForInt(int i) {
 /* generate response */
 
 - (void)_appendTimeFieldToResponse:(WOResponse *)_r inContext:(WOContext *)_cx{
-  NSCalendarDate *tdate;
   WOComponent    *comp;
   BOOL           tuseTField;
   int            hourInt;        // hourInterval
@@ -382,7 +372,6 @@ static NSString *retStr02ForInt(int i) {
   NSMutableArray *ta;
 
   comp  = [_cx component];
-  tdate = [NSCalendarDate calendarDate];
 
   hourInt = self->hourInterval
     ? [self->hourInterval intValueInComponent:comp] : 1;

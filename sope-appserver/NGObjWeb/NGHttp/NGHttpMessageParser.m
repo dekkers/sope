@@ -47,10 +47,6 @@ static inline void NGAddChar(NSMutableData *_data, int c) {
 
 @implementation NGHttpMessageParser
 
-+ (int)version {
-  return [super version] + 0 /* v3 */;
-}
-
 static NGMimeType           *wwwFormUrlEncoded = nil;
 static NGMimeType           *multipartFormData = nil;
 static id<NGMimeBodyParser> wwwFormUrlParser   = nil;
@@ -61,10 +57,6 @@ static id<NGMimeBodyParser> multipartFormDataParser = nil;
   if (!isInitialized) {
     isInitialized = YES;
 
-    NSAssert2([super version] == 3,
-	      @"invalid superclass (%@) version %i !",
-	      NSStringFromClass([self superclass]), [super version]);
-    
     wwwFormUrlEncoded = 
       [[NGMimeType mimeType:@"application/x-www-form-urlencoded"] retain];
     multipartFormData = [[NGMimeType mimeType:@"multipart/form-data"] retain];
@@ -442,7 +434,7 @@ static inline int _skipLWSP(NGHttpMessageParser *self, int _c) {
   }
 
   { /* process HTTP status */
-    char buf[5];
+    char buf[6];
     int  i = 0;
     
     do {
@@ -527,7 +519,7 @@ static inline int _skipLWSP(NGHttpMessageParser *self, int _c) {
 }
 
 - (void)parseBodyOfPart:(id<NGMimePart>)_part {
-  BOOL doParse, hasCLenHeader;
+  BOOL doParse;
   id   clenValues;
   
   if (_part == nil) {
@@ -537,7 +529,6 @@ static inline int _skipLWSP(NGHttpMessageParser *self, int _c) {
   
   /* parse only if content-length > 0 */
   clenValues = [_part valuesOfHeaderFieldWithName:@"content-length"];
-  hasCLenHeader = clenValues ? YES : NO;
   if ((clenValues = [clenValues nextObject])) {
     if ([(id)_part contentLength] > 0)
       doParse = YES;

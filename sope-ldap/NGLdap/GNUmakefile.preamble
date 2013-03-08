@@ -15,7 +15,8 @@ ADDITIONAL_CPPFLAGS += -Wall -Wno-protocol
 
 libNGLdap_LIBRARIES_DEPEND_UPON += \
 	-lNGExtensions -lEOControl	\
-	-lDOM -lSaxObjC
+	$(BASE_LIBS)
+
 NGLdap_LIBRARIES_DEPEND_UPON += \
 	-framework NGExtensions -framework EOControl	\
 	-framework DOM -framework SaxObjC
@@ -39,9 +40,6 @@ ifneq ($(FOUNDATION_LIB),nx)
 
 ifeq ($(sasl),yes)
 libNGLdap_LIBRARIES_DEPEND_UPON += -lsasl
-endif
-ifneq ($(nossl),yes)
-libNGLdap_LIBRARIES_DEPEND_UPON += -lssl
 endif
 
 else # is NeXT/Apple Foundation
@@ -89,13 +87,3 @@ endif
 #ADDITIONAL_INCLUDE_DIRS += -I/usr/local/openldap/include
 #SYSTEM_LIB_DIR += -L/usr/local/openldap/lib
 #endif
-
-
-# Windows
-
-ifeq ($(GNUSTEP_TARGET_OS),mingw32)
-libNGLdap_LIBRARIES_DEPEND_UPON += -lFoundation -lobjc
-endif
-ifeq ($(GNUSTEP_TARGET_OS),cygwin32)
-libNGLdap_LIBRARIES_DEPEND_UPON += -lFoundation -lobjc
-endif

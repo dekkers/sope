@@ -19,6 +19,8 @@
   02111-1307, USA.
 */
 
+#include <inttypes.h>
+
 #include "NSObject+Values.h"
 #include "common.h"
 
@@ -77,6 +79,11 @@
 @end /* NSObject(Values) */
 
 @implementation NSString(NGValues)
+
++ (NSString *) stringWithUnsignedLongLong: (unsigned long long)value
+{
+  return [NSString stringWithFormat: @"0x%.16"PRIx64, value];
+}
 
 - (BOOL)boolValue {
   unsigned len;
@@ -167,15 +174,11 @@
   return [self intValue];
 }
 
-@end /* NSString(Values) */
-
-@implementation NSMutableString(NGValues)
-
-- (NSString *)stringValue {
-  return [[self copy] autorelease];
+- (unsigned long long)unsignedLongLongValue {
+  return strtoull([self lossyCString], NULL, 0);
 }
 
-@end /* NSMutableString(Values) */
+@end /* NSString(Values) */
 
 void __link_NGExtensions_NSObjectValues(void) {
   /* required for static linking */
