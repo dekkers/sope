@@ -1,8 +1,2 @@
 0001-do-not-build-json.patch
-0002-use-gnutls.patch
-0003-close-all-fds-on-daemon-start.patch
-0004-link-everything-correctly.patch
-0005-Do-not-build-xmlrpc-and-stxsaxdriver.patch
-0006-Fix-FTBFS-on-arm.patch
-0007-Remove-disabling-of-optimization.patch
-0008-Detect-Mac-OS-X-10.8-Address-Book-and-iCal-correctly.patch
+0002-Do-not-build-xmlrpc-and-stxsaxdriver.patch
