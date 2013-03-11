@@ -20,4 +20,4 @@ clean::
 	$(MAKE) distclean
 
 config.make:
-	./configure --disable-strip --with-gnustep
+	./configure --disable-strip --with-gnustep --with-ssl=gnutls
