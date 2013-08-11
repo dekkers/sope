@@ -1,3 +1,10 @@
+sope (2.0.7-1) unstable; urgency=low
+
+  * New upstream release.
+  * Include updated watch file written by Bart Martens.
+
+ -- Jeroen Dekkers <jeroen@dekkers.ch>  Sun, 11 Aug 2013 20:18:06 +0200
+
 sope (2.0.5-1) unstable; urgency=low
 
   * New upstream release.
