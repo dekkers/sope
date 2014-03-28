@@ -2,8 +2,9 @@ sope (2.2.2-1) UNRELEASED; urgency=medium
 
   * New upstream release.
   * Bump Standards-Version to 3.9.5, no changes needed.
+  * Update VCS-* fields to use the canonical URI.
 
- -- Jeroen Dekkers <jeroen@dekkers.ch>  Fri, 28 Mar 2014 21:23:01 +0100
+ -- Jeroen Dekkers <jeroen@dekkers.ch>  Fri, 28 Mar 2014 22:33:05 +0100
 
 sope (2.1.1-1) unstable; urgency=medium
 
