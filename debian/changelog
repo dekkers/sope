@@ -1,3 +1,10 @@
+sope (2.2.2-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * Bump Standards-Version to 3.9.5, no changes needed.
+
+ -- Jeroen Dekkers <jeroen@dekkers.ch>  Fri, 28 Mar 2014 21:23:01 +0100
+
 sope (2.1.1-1) unstable; urgency=medium
 
   * New upstream release.
