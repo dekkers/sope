@@ -1,3 +1,9 @@
+sope (2.2.5-1) unstable; urgency=medium
+
+  * [25593ad7] New upstream release.
+
+ -- Jeroen Dekkers <jeroen@dekkers.ch>  Sat, 07 Jun 2014 21:34:11 +0200
+
 sope (2.2.3-1) unstable; urgency=medium
 
   * New upstream release.
